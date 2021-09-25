@@ -5,7 +5,13 @@
  */
 package thepackage;
 
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.Statement;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -36,7 +42,7 @@ public class CustomerFrame extends javax.swing.JFrame {
         cID = new javax.swing.JTextField();
         addButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        customerTable = new javax.swing.JTable();
         backButton = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         cMoney = new javax.swing.JTextField();
@@ -45,6 +51,16 @@ public class CustomerFrame extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        showButton = new javax.swing.JButton();
+        deleteButton = new javax.swing.JButton();
+        addWinnerButton = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        WinnerTable = new javax.swing.JTable();
+        showWinnerButton = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
+        deleteWinnerButton = new javax.swing.JButton();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -84,12 +100,14 @@ public class CustomerFrame extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        customerTable.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        customerTable.setForeground(new java.awt.Color(0, 102, 255));
+        customerTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Name", "ID", "Code", "Money"
+                "ID", "Name", "Code", "Money"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -100,7 +118,14 @@ public class CustomerFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        customerTable.setGridColor(new java.awt.Color(51, 153, 255));
+        customerTable.setRowHeight(50);
+        customerTable.setRowMargin(2);
+        customerTable.setSelectionBackground(new java.awt.Color(0, 102, 255));
+        customerTable.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        customerTable.setShowHorizontalLines(false);
+        customerTable.setShowVerticalLines(false);
+        jScrollPane1.setViewportView(customerTable);
 
         backButton.setText("Back");
         backButton.addActionListener(new java.awt.event.ActionListener() {
@@ -110,7 +135,7 @@ public class CustomerFrame extends javax.swing.JFrame {
         });
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel4.setText("Customer Table");
+        jLabel4.setText("Customers");
 
         cMoney.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -152,70 +177,175 @@ public class CustomerFrame extends javax.swing.JFrame {
                 .addGap(32, 32, 32))
         );
 
+        showButton.setText("Show Customers");
+        showButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showButtonActionPerformed(evt);
+            }
+        });
+
+        deleteButton.setText("Delete");
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButtonActionPerformed(evt);
+            }
+        });
+
+        addWinnerButton.setText("Add Winner");
+        addWinnerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addWinnerButtonActionPerformed(evt);
+            }
+        });
+
+        WinnerTable.setBackground(new java.awt.Color(102, 255, 102));
+        WinnerTable.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        WinnerTable.setForeground(new java.awt.Color(0, 102, 255));
+        WinnerTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Name", "Code", "Money"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        WinnerTable.setGridColor(new java.awt.Color(51, 153, 255));
+        WinnerTable.setRowHeight(50);
+        WinnerTable.setRowMargin(2);
+        WinnerTable.setSelectionBackground(new java.awt.Color(0, 102, 255));
+        WinnerTable.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        WinnerTable.setShowHorizontalLines(false);
+        WinnerTable.setShowVerticalLines(false);
+        jScrollPane2.setViewportView(WinnerTable);
+
+        showWinnerButton.setText("Show Winners");
+        showWinnerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showWinnerButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel7.setText("Winners");
+
+        deleteWinnerButton.setText("Delete Winner");
+        deleteWinnerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteWinnerButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane1)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(7, 7, 7)
-                                .addComponent(cName, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
-                                .addComponent(jLabel3)
-                                .addGap(8, 8, 8)
-                                .addComponent(cID, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(40, 40, 40)
-                                .addComponent(jLabel5)
-                                .addGap(12, 12, 12)
-                                .addComponent(cMoney, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(55, 55, 55)
-                                .addComponent(jLabel6)
+                        .addGap(24, 24, 24)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 728, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 564, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addGap(7, 7, 7)
+                                        .addComponent(cName, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGap(34, 34, 34)
+                                                .addComponent(jLabel4)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(showButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(52, 52, 52)
+                                                .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGap(0, 0, Short.MAX_VALUE)
+                                                .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGap(113, 113, 113)
+                                        .addComponent(jLabel7)
+                                        .addGap(70, 70, 70)
+                                        .addComponent(addWinnerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(18, 18, 18)
-                                .addComponent(cCode, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(41, 41, 41))))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(621, 621, 621)
-                .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                                .addComponent(showWinnerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(deleteWinnerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(342, 342, 342)
+                        .addComponent(jLabel3)
+                        .addGap(8, 8, 8)
+                        .addComponent(cID, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel5)
+                        .addGap(12, 12, 12)
+                        .addComponent(cMoney, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel6)
+                        .addGap(18, 18, 18)
+                        .addComponent(cCode, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(41, 41, 41))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(99, 99, 99))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(225, 225, 225))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(filler2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(692, 692, 692))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
+                .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(cName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
                     .addComponent(cID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
-                    .addComponent(cMoney, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(cMoney, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(cCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel6)))
+                        .addComponent(jLabel6)
+                        .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(38, 38, 38)
+                .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
+                .addComponent(filler2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(addWinnerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(showWinnerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(showButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deleteWinnerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 348, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
                 .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32))
+                .addGap(780, 780, 780))
         );
 
         pack();
@@ -231,6 +361,38 @@ public class CustomerFrame extends javax.swing.JFrame {
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         // TODO add your handling code here:
+        String id = cID.getText();
+        String name = cName.getText();
+        String code = cCode.getText();
+        String money = cMoney.getText();
+
+        if (id.equals("") || name.equals("") || code.equals("") || money.equals("")) {
+            JOptionPane.showMessageDialog(this, "Field Empty");
+        } else {
+            if (code.length() > 4) {
+                JOptionPane.showMessageDialog(this, "Code should be 4-digit");
+            } else {
+                try {
+                    Class.forName("com.mysql.jdbc.Driver");
+                    Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/projectdb?useSSL=false", "root", "asad18");
+
+                    Statement stm1 = (Statement) con.createStatement();
+                    String sql = "INSERT INTO customer (id, name, code, money) VALUES ('" + id + "', '" + name + "', '" + code + "', '" + money + "')";
+                    stm1.executeUpdate(sql);
+                    customerTable.setModel(new DefaultTableModel(null, new String[]{"ID", "Name", "Code", "Money"}));
+                    updateTable();
+                    JOptionPane.showMessageDialog(this, "Recorded Updated");
+                    con.close();
+                    cName.setText("");
+                    cID.setText("");
+                    cCode.setText("");
+                    cMoney.setText("");
+
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this, e.getMessage());
+                }
+            }
+        }
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
@@ -248,6 +410,161 @@ public class CustomerFrame extends javax.swing.JFrame {
     private void cCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cCodeActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cCodeActionPerformed
+
+    private void showButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showButtonActionPerformed
+        // TODO add your handling code here:
+        updateTable();
+    }//GEN-LAST:event_showButtonActionPerformed
+
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        // TODO add your handling code here:
+        try {
+            if (customerTable.getSelectedRowCount() == 1) {
+
+                Class.forName("com.mysql.jdbc.Driver");
+                Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/projectdb?useSSL=false", "root", "asad18");
+                Statement stm2 = (Statement) con.createStatement();
+                String sql = "delete from customer where id=" + customerTable.getValueAt(customerTable.getSelectedRow(), 0) + "";
+                stm2.executeUpdate(sql);
+                updateTable();
+                JOptionPane.showMessageDialog(this, "Record Updated");
+            } else {
+                JOptionPane.showMessageDialog(this, "Select a customer to delete");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }//GEN-LAST:event_deleteButtonActionPerformed
+
+    private void addWinnerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addWinnerButtonActionPerformed
+        // TODO add your handling code here:
+        try {
+            if (WinnerTable.getRowCount() == 4) {
+                JOptionPane.showMessageDialog(this, "Winners Selected Already");
+            } else {
+                if (customerTable.getSelectedRowCount() == 1) {
+                    Class.forName("com.mysql.jdbc.Driver");
+                    Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/projectdb?useSSL=false", "root", "asad18");
+                    Statement stm3 = (Statement) con.createStatement();
+                    DefaultTableModel model = (DefaultTableModel) WinnerTable.getModel();
+                    ResultSet rs2 = stm3.executeQuery("select * from customer where id='" + customerTable.getValueAt(customerTable.getSelectedRow(), 0) + "'");
+                    while (rs2.next()) {
+                        String tempID = rs2.getString("id");
+                        String tempName = rs2.getString("name");
+                        String tempCode = rs2.getString("code");
+                        String tempMoney = rs2.getString("money");
+                        Statement stm4 = (Statement) con.createStatement();
+                        String sql = "INSERT INTO winner (id, name, code, money) VALUES ('" + tempID + "', '" + tempName + "', '" + tempCode + "', '" + tempMoney + "')";
+                        stm4.executeUpdate(sql);
+                        model.addRow(new Object[]{tempID, tempName, tempCode, tempMoney});
+                    }
+                    con.close();
+                    JOptionPane.showMessageDialog(this, "Winner Added");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Select a customer");
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+
+    }//GEN-LAST:event_addWinnerButtonActionPerformed
+
+    private void showWinnerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showWinnerButtonActionPerformed
+        // TODO add your handling code here:
+        try {
+            WinnerTable.setModel(new DefaultTableModel(null, new String[]{"ID", "Name", "Code", "Money"}));
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/projectdb?useSSL=false", "root", "asad18");
+
+            Statement stm5 = (Statement) con.createStatement();
+            DefaultTableModel model = (DefaultTableModel) WinnerTable.getModel();
+            ResultSet rs3 = stm5.executeQuery("select * from winner");
+
+            while (rs3.next()) {
+                String tempID = rs3.getString("id");
+                String tempName = rs3.getString("name");
+                String tempCode = rs3.getString("code");
+                String tempMoney = rs3.getString("money");
+
+                model.addRow(new Object[]{tempID, tempName, tempCode, tempMoney});
+            }
+            con.close();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+
+    }//GEN-LAST:event_showWinnerButtonActionPerformed
+
+    private void deleteWinnerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteWinnerButtonActionPerformed
+        // TODO add your handling code here:
+        try {
+            if (WinnerTable.getSelectedRowCount() == 1) {
+
+                Class.forName("com.mysql.jdbc.Driver");
+                Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/projectdb?useSSL=false", "root", "asad18");
+                Statement stm6 = (Statement) con.createStatement();
+                String sql = "delete from winner where id=" + WinnerTable.getValueAt(WinnerTable.getSelectedRow(), 0) + "";
+                stm6.executeUpdate(sql);
+                updateWinnerTable();
+                JOptionPane.showMessageDialog(this, "Winners Updated");
+            } else {
+                JOptionPane.showMessageDialog(this, "Select a winner to delete");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }//GEN-LAST:event_deleteWinnerButtonActionPerformed
+    private void updateWinnerTable() {
+        try {
+            WinnerTable.setModel(new DefaultTableModel(null, new String[]{"ID", "Name", "Code", "Money"}));
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/projectdb?useSSL=false", "root", "asad18");
+
+            Statement stm = (Statement) con.createStatement();
+            DefaultTableModel model = (DefaultTableModel) WinnerTable.getModel();
+            ResultSet rs4 = stm.executeQuery("select * from winner");
+
+            while (rs4.next()) {
+                String tempID = rs4.getString("id");
+                String tempName = rs4.getString("name");
+                String tempCode = rs4.getString("code");
+                String tempMoney = rs4.getString("money");
+
+                model.addRow(new Object[]{tempID, tempName, tempCode, tempMoney});
+            }
+            con.close();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }
+
+    private void updateTable() {
+        try {
+            customerTable.setModel(new DefaultTableModel(null, new String[]{"ID", "Name", "Code", "Money"}));
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/projectdb?useSSL=false", "root", "asad18");
+
+            Statement stm = (Statement) con.createStatement();
+            DefaultTableModel model = (DefaultTableModel) customerTable.getModel();
+            ResultSet rs = stm.executeQuery("select * from customer");
+
+            while (rs.next()) {
+                String tempID = rs.getString("id");
+                String tempName = rs.getString("name");
+                String tempCode = rs.getString("code");
+                String tempMoney = rs.getString("money");
+
+                model.addRow(new Object[]{tempID, tempName, tempCode, tempMoney});
+            }
+            con.close();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -280,7 +597,7 @@ public class CustomerFrame extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
 
-                CustomerFrame frame =new CustomerFrame();
+                CustomerFrame frame = new CustomerFrame();
                 frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
                 frame.setVisible(true);
             }
@@ -288,21 +605,32 @@ public class CustomerFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable WinnerTable;
     private javax.swing.JButton addButton;
+    private javax.swing.JButton addWinnerButton;
     private javax.swing.JButton backButton;
     private javax.swing.JTextField cCode;
     private javax.swing.JTextField cID;
     private javax.swing.JTextField cMoney;
     private javax.swing.JTextField cName;
+    private javax.swing.JTable customerTable;
+    private javax.swing.JButton deleteButton;
+    private javax.swing.JButton deleteWinnerButton;
+    private javax.swing.Box.Filler filler1;
+    private javax.swing.Box.Filler filler2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton showButton;
+    private javax.swing.JButton showWinnerButton;
     // End of variables declaration//GEN-END:variables
+
 }

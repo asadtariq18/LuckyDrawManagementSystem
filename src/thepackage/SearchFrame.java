@@ -3,14 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author H.A.R
  */
 package thepackage;
+
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.Statement;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 public class SearchFrame extends javax.swing.JFrame {
+
+    boolean isDealer = true;
+    boolean isCustomer = false;
 
     /**
      * Creates new form SearchFrame
@@ -28,6 +38,8 @@ public class SearchFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
         jScrollPane1 = new javax.swing.JScrollPane();
         ResultTable = new javax.swing.JTable();
         backButton = new javax.swing.JButton();
@@ -36,10 +48,14 @@ public class SearchFrame extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        customerRB = new javax.swing.JRadioButton();
+        dealerRB = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        ResultTable.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        ResultTable.setForeground(new java.awt.Color(0, 102, 255));
         ResultTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -52,10 +68,20 @@ public class SearchFrame extends javax.swing.JFrame {
                 false, false, false
             };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
             }
+
         });
+        ResultTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        ResultTable.setGridColor(new java.awt.Color(51, 102, 255));
+        ResultTable.setRowHeight(50);
+        ResultTable.setRowMargin(2);
+        ResultTable.setSelectionBackground(new java.awt.Color(0, 102, 255));
+        ResultTable.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        ResultTable.setShowHorizontalLines(false);
+        ResultTable.setShowVerticalLines(false);
         jScrollPane1.setViewportView(ResultTable);
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 260, 1280, 360));
@@ -72,9 +98,32 @@ public class SearchFrame extends javax.swing.JFrame {
         jLabel4.setText("Search Results");
         getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 220, -1, -1));
 
+        searchField.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                searchFieldCaretUpdate(evt);
+            }
+        });
+        searchField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                searchFieldFocusGained(evt);
+            }
+        });
+        searchField.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+                searchFieldCaretPositionChanged(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                searchFieldInputMethodTextChanged(evt);
+            }
+        });
         searchField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchFieldActionPerformed(evt);
+            }
+        });
+        searchField.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                searchFieldPropertyChange(evt);
             }
         });
         getContentPane().add(searchField, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 160, 190, 30));
@@ -107,6 +156,23 @@ public class SearchFrame extends javax.swing.JFrame {
 
         getContentPane().add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1450, -1));
 
+        customerRB.setText("Customer");
+        customerRB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customerRBActionPerformed(evt);
+            }
+        });
+        getContentPane().add(customerRB, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 160, -1, -1));
+
+        dealerRB.setSelected(true);
+        dealerRB.setText("Dealer");
+        dealerRB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dealerRBActionPerformed(evt);
+            }
+        });
+        getContentPane().add(dealerRB, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 160, -1, -1));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -120,7 +186,100 @@ public class SearchFrame extends javax.swing.JFrame {
 
     private void searchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchFieldActionPerformed
         // TODO add your handling code here:
+
     }//GEN-LAST:event_searchFieldActionPerformed
+
+    private void searchResult() {
+        if (isDealer) {
+            try {
+                ResultTable.setModel(new DefaultTableModel(null, new String[]{"ID", "Name", "Number"}));
+                Class.forName("com.mysql.jdbc.Driver");
+                Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/projectdb?useSSL=false", "root", "asad18");
+
+                Statement stm = (Statement) con.createStatement();
+                DefaultTableModel model = (DefaultTableModel) ResultTable.getModel();
+                String sql = "select * from dealer where id like '" + searchField.getText() + "%" + "'";
+                ResultSet rs = stm.executeQuery(sql);
+
+                while (rs.next()) {
+                    String tempID = rs.getString("id");
+                    String tempName = rs.getString("name");
+                    String tempNumber = rs.getString("number");
+
+                    model.addRow(new Object[]{tempID, tempName, tempNumber});
+                }
+                con.close();
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, e.getMessage());
+            }
+        } else if (isCustomer) {
+            try {
+                ResultTable.setModel(new DefaultTableModel(null, new String[]{"ID", "Name", "Code", "Money"}));
+                Class.forName("com.mysql.jdbc.Driver");
+                Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/projectdb?useSSL=false", "root", "asad18");
+
+                Statement stm = (Statement) con.createStatement();
+                DefaultTableModel model = (DefaultTableModel) ResultTable.getModel();
+                String sql = "select * from customer where id like '" + searchField.getText() + "%" + "'";
+                ResultSet rs = stm.executeQuery(sql);
+
+                while (rs.next()) {
+                    String tempID = rs.getString("id");
+                    String tempName = rs.getString("name");
+                    String tempCode = rs.getString("code");
+                    String tempMoney = rs.getString("money");
+
+                    model.addRow(new Object[]{tempID, tempName, tempCode, tempMoney});
+                }
+                con.close();
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, e.getMessage());
+            }
+        }
+    }
+    private void dealerRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dealerRBActionPerformed
+        // TODO add your handling code here:
+        isDealer = true;
+        isCustomer = false;
+        dealerRB.setSelected(true);
+        customerRB.setSelected(false);
+        searchResult();
+
+    }//GEN-LAST:event_dealerRBActionPerformed
+
+    private void customerRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customerRBActionPerformed
+        // TODO add your handling code here:
+        isDealer = false;
+        isCustomer = true;
+        dealerRB.setSelected(false);
+        customerRB.setSelected(true);
+        searchResult();
+    }//GEN-LAST:event_customerRBActionPerformed
+
+    private void searchFieldPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_searchFieldPropertyChange
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_searchFieldPropertyChange
+
+    private void searchFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchFieldFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_searchFieldFocusGained
+
+    private void searchFieldInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_searchFieldInputMethodTextChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_searchFieldInputMethodTextChanged
+
+    private void searchFieldCaretPositionChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_searchFieldCaretPositionChanged
+
+    }//GEN-LAST:event_searchFieldCaretPositionChanged
+
+    private void searchFieldCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_searchFieldCaretUpdate
+        // TODO add your handling code here:
+        // TODO add your handling code here:
+        searchResult();
+    }//GEN-LAST:event_searchFieldCaretUpdate
 
     /**
      * @param args the command line arguments
@@ -160,6 +319,10 @@ public class SearchFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable ResultTable;
     private javax.swing.JButton backButton;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.JRadioButton customerRB;
+    private javax.swing.JRadioButton dealerRB;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

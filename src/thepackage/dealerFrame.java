@@ -5,7 +5,13 @@
  */
 package thepackage;
 
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.Statement;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -39,11 +45,15 @@ public class dealerFrame extends javax.swing.JFrame {
         nameField = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         idField = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        backButton = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
+        numberField = new javax.swing.JTextField();
+        addDealerBtn = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        dealerTable = new javax.swing.JTable();
+        backButton = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        showBtn = new javax.swing.JButton();
+        deleteBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.CardLayout());
@@ -97,10 +107,28 @@ public class dealerFrame extends javax.swing.JFrame {
         });
         jPanel5.add(idField, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 50, 190, -1));
 
-        jButton1.setText("Add");
-        jPanel5.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 30, -1, -1));
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel4.setText("Dealer Table");
+        jPanel5.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 120, -1, -1));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        numberField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                numberFieldActionPerformed(evt);
+            }
+        });
+        jPanel5.add(numberField, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 80, 190, -1));
+
+        addDealerBtn.setText("Add");
+        addDealerBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addDealerBtnActionPerformed(evt);
+            }
+        });
+        jPanel5.add(addDealerBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 40, 100, 40));
+
+        dealerTable.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        dealerTable.setForeground(new java.awt.Color(0, 102, 255));
+        dealerTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -116,7 +144,14 @@ public class dealerFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        dealerTable.setGridColor(new java.awt.Color(51, 102, 255));
+        dealerTable.setIntercellSpacing(new java.awt.Dimension(1, 2));
+        dealerTable.setRowHeight(50);
+        dealerTable.setSelectionBackground(new java.awt.Color(0, 102, 255));
+        dealerTable.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        dealerTable.setShowHorizontalLines(false);
+        dealerTable.setShowVerticalLines(false);
+        jScrollPane1.setViewportView(dealerTable);
 
         jPanel5.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 160, 1270, 360));
 
@@ -128,9 +163,25 @@ public class dealerFrame extends javax.swing.JFrame {
         });
         jPanel5.add(backButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(1180, 540, 90, 40));
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel4.setText("Dealer Table");
-        jPanel5.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 120, -1, -1));
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel5.setText("Dealer Number ");
+        jPanel5.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, -1, -1));
+
+        showBtn.setText("Show");
+        showBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showBtnActionPerformed(evt);
+            }
+        });
+        jPanel5.add(showBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 100, 100, 40));
+
+        deleteBtn.setText("Delete");
+        deleteBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteBtnActionPerformed(evt);
+            }
+        });
+        jPanel5.add(deleteBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 100, 100, 40));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -184,6 +235,91 @@ public class dealerFrame extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_backButtonActionPerformed
 
+    private void addDealerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDealerBtnActionPerformed
+        // TODO add your handling code here:
+
+        String id = idField.getText();
+        String name = nameField.getText();
+        String number = numberField.getText();
+        System.out.print(id);
+        if (id.equals("") || name.equals("") || number.equals("")) {
+            JOptionPane.showMessageDialog(this, "Field Empty");
+        } else {
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/projectdb?useSSL=false", "root", "asad18");
+
+                Statement stm = (Statement) con.createStatement();
+                String sql = "INSERT INTO dealer (id, name, number) VALUES ('" + id + "', '" + name + "', '" + number + "')";
+                stm.executeUpdate(sql);
+                updateTable();
+                JOptionPane.showMessageDialog(this, "Recorded Updated");
+                con.close();
+
+                nameField.setText("");
+                idField.setText("");
+                numberField.setText("");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, e.getMessage());
+            }
+        }
+
+    }//GEN-LAST:event_addDealerBtnActionPerformed
+
+    private void numberFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numberFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_numberFieldActionPerformed
+
+    private void showBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showBtnActionPerformed
+        // TODO add your handling code here:
+        updateTable();
+        showBtn.setVisible(false);
+    }//GEN-LAST:event_showBtnActionPerformed
+
+    private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtnActionPerformed
+        // TODO add your handling code here:
+        try {
+            if(dealerTable.getSelectedRowCount()==1){
+                
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/projectdb?useSSL=false", "root", "asad18");
+            System.out.print(dealerTable.getValueAt(dealerTable.getSelectedRow(), 0));
+            Statement stm = (Statement) con.createStatement();
+            String sql = "delete from dealer where id=" + dealerTable.getValueAt(dealerTable.getSelectedRow(), 0) + "";
+            stm.executeUpdate(sql);
+            updateTable();
+            JOptionPane.showMessageDialog(this, "Record Updated");
+            }else{
+                 JOptionPane.showMessageDialog(this, "Select a dealer to delete");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }//GEN-LAST:event_deleteBtnActionPerformed
+    public void updateTable() {
+        try {
+            dealerTable.setModel(new DefaultTableModel(null, new String[]{"ID", "Name", "Number"}));
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/projectdb?useSSL=false", "root", "asad18");
+
+            Statement stm = (Statement) con.createStatement();
+            DefaultTableModel model = (DefaultTableModel) dealerTable.getModel();
+            ResultSet rs = stm.executeQuery("select * from dealer");
+
+            while (rs.next()) {
+                String tempID = rs.getString("id");
+                String tempName = rs.getString("name");
+                String tempNumber = rs.getString("number");
+
+                model.addRow(new Object[]{tempID, tempName, tempNumber});
+            }
+            con.close();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -215,30 +351,33 @@ public class dealerFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                
+
                 dealerFrame frame = new dealerFrame();
                 frame.setVisible(true);
                 frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addDealerBtn;
     private javax.swing.JButton backButton;
+    private static javax.swing.JTable dealerTable;
+    private javax.swing.JButton deleteBtn;
     private javax.swing.JTextField idField;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField nameField;
+    private javax.swing.JTextField numberField;
+    private javax.swing.JButton showBtn;
     // End of variables declaration//GEN-END:variables
 }

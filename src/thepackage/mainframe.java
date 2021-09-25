@@ -156,6 +156,7 @@ public class mainframe extends javax.swing.JFrame {
         dealerFrame frame2 = new dealerFrame();
         frame2.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame2.setVisible(true);
+
         this.dispose();
     }//GEN-LAST:event_dealerButtonActionPerformed
 
